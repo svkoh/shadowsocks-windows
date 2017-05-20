@@ -49,6 +49,11 @@ namespace Shadowsocks.View
         private MenuItem editGFWUserRuleItem;
         private MenuItem editOnlinePACItem;
         private MenuItem secureLocalPacUrlToggleItem;
+        private MenuItem KcptunItem;
+        private MenuItem AutoStartupKcptunItem;
+        private MenuItem startKcptunItem;
+        private MenuItem stopKcptunItem;
+        private MenuItem restartKcptunItem;
         private MenuItem autoCheckUpdatesToggleItem;
         private MenuItem checkPreReleaseToggleItem;
         private MenuItem proxyItem;
@@ -283,6 +288,12 @@ namespace Shadowsocks.View
                     CreateMenuItem("Copy Local PAC URL", new EventHandler(this.CopyLocalPacUrlItem_Click)),
                     this.editOnlinePACItem = CreateMenuItem("Edit Online PAC URL...", new EventHandler(this.UpdateOnlinePACURLItem_Click)),
                 }),
+                this.KcptunItem = CreateMenuGroup("KCPTUN ", new MenuItem[] {
+                    this.AutoStartupKcptunItem = CreateMenuItem("Start KCPTUN on Boot", new EventHandler(this.AutoStartupKcptunItem_Click)),
+                    this.startKcptunItem = CreateMenuItem("Start KCPTUN", new EventHandler(this.StartKcptunItem_Click)),
+                    this.stopKcptunItem = CreateMenuItem("Stop KCPTUN", new EventHandler(this.StopKcptunItem_Click)),
+                    this.restartKcptunItem = CreateMenuItem("Restart KCPTUN", new EventHandler(this.RestartKcptunItem_Click)),
+                }),
                 this.proxyItem = CreateMenuItem("Forward Proxy...", new EventHandler(this.proxyItem_Click)),
                 new MenuItem("-"),
                 this.AutoStartupItem = CreateMenuItem("Start on Boot", new EventHandler(this.AutoStartupItem_Click)),
@@ -303,6 +314,12 @@ namespace Shadowsocks.View
                 new MenuItem("-"),
                 CreateMenuItem("Quit", new EventHandler(this.Quit_Click))
             });
+            this.KcptunItem.Popup += KcptunItem_Popup;
+        }
+
+        private void KcptunItem_Popup(object sender, EventArgs e)
+        {
+            UpdateKcptunMenu();
         }
 
         #endregion
@@ -411,6 +428,7 @@ namespace Shadowsocks.View
             onlinePACItem.Checked = onlinePACItem.Enabled && config.useOnlinePac;
             localPACItem.Checked = !onlinePACItem.Checked;
             secureLocalPacUrlToggleItem.Checked = config.secureLocalPac;
+            AutoStartupKcptunItem.Checked = AutoStartupKcptun.Check();
             UpdatePACItemsEnabledStatus();
             UpdateUpdateMenu();
         }
@@ -776,7 +794,7 @@ namespace Shadowsocks.View
                 MessageBox.Show(I18N.GetString("Failed to update registry"));
             }
         }
-
+        
         private void LocalPACItem_Click(object sender, EventArgs e)
         {
             if (!localPACItem.Checked)
@@ -804,6 +822,30 @@ namespace Shadowsocks.View
                 }
                 UpdatePACItemsEnabledStatus();
             }
+        }
+
+        private void AutoStartupKcptunItem_Click(object sender, EventArgs e)
+        {
+            AutoStartupKcptunItem.Checked = !AutoStartupKcptunItem.Checked;
+            if (!AutoStartupKcptun.Set(AutoStartupKcptunItem.Checked))
+            {
+                MessageBox.Show(I18N.GetString("Failed to update registry"));
+            }
+        }
+
+        private void StartKcptunItem_Click(object sender, EventArgs e)
+        {
+            Kcptun.Start();
+        }
+
+        private void StopKcptunItem_Click(object sender, EventArgs e)
+        {
+            Kcptun.Stop();
+        }
+
+        private void RestartKcptunItem_Click(object sender, EventArgs e)
+        {
+            Kcptun.Restart();
         }
 
         private void UpdateOnlinePACURLItem_Click(object sender, EventArgs e)
@@ -848,6 +890,11 @@ namespace Shadowsocks.View
             }
         }
 
+        private void UpdateKcptunMenu()
+        {
+            this.startKcptunItem.Enabled = !Kcptun.IsRunning();
+            this.stopKcptunItem.Enabled = Kcptun.IsRunning();
+        }
 
         private void UpdateUpdateMenu()
         {

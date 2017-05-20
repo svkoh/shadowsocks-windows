@@ -39,6 +39,10 @@ Edit Servers=编辑服务器
 Load Balance=负载均衡
 High Availability=高可用
 Choose by statistics=根据统计
+Start KCPTUN on Boot=开机启动 KCPTUN
+Start KCPTUN=启动 KCPTUN
+Stop KCPTUN=停止 KCPTUN
+Restart KCPTUN=重启 KCPTUN
 
 # Config Form
 

@@ -93,7 +93,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\System\AutoStartupKcptun.cs" />
     <Compile Include="Controller\System\Hotkeys\HotkeyCallbacks.cs" />
+    <Compile Include="Controller\System\Kcptun.cs" />
     <Compile Include="Encryption\AEAD\AEADEncryptor.cs" />
     <Compile Include="Encryption\AEAD\AEADMbedTLSEncryptor.cs" />
     <Compile Include="Encryption\AEAD\AEADSodiumEncryptor.cs" />
